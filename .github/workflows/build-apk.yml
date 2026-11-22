@@ -36,8 +36,20 @@ jobs:
 
       - name: Install toolchain (Flutter / Android SDK / NDK)
         working-directory: dsh-go
+        env:
+          GIT_HTTP_LOW_SPEED_LIMIT: '1000'
+          GIT_HTTP_LOW_SPEED_TIME: '60'
+          CURL_CA_BUNDLE: ''
         run: |
-          bash tooling/setup-toolchain.sh
+          set -x
+          for attempt in 1 2 3; do
+            echo "toolchain attempt $attempt"
+            if bash tooling/setup-toolchain.sh; then
+              echo "toolchain ok"; exit 0
+            fi
+            sleep 20
+          done
+          echo "toolchain failed after retries"; exit 1
 
       - name: Build runtime (arm64-v8a)
         working-directory: dsh-go
