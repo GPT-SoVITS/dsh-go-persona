@@ -78,3 +78,11 @@ jobs:
           name: dsh-go-persona-apk
           path: out/*.apk
           if-no-files-found: error
+
+      - name: Upload to release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-latest
+          name: apk-latest
+          files: out/*.apk
+          fail_on_unmatched_files: false
