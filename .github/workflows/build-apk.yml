@@ -36,6 +36,14 @@ jobs:
           cp overlay/full-persona.js dsh-go/runtime/bridge/dsh-go-bridge/lib/companion/full-persona.js
           grep -c "渴望外面世界" dsh-go/runtime/bridge/dsh-go-bridge/lib/companion/full-persona.js
 
+      - name: Patch companion preset selection
+        run: |
+          # 上游在 _selectPreset 里要求 p.broken == null，引擎返回 broken 时
+          # 就永久退回「只有人设、没有工具」的路径。这个补丁去掉该条件。
+          cp overlay/patch_companion.py dsh-go/
+          cd dsh-go && python3 patch_companion.py
+          grep -n "companionPresetId" app/lib/companion/companion_state.dart
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
